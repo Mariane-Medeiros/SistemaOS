@@ -7,6 +7,7 @@ package br.com.infox.telas;
 import java.sql.*;
 import br.com.infox.dal.ModuloConexao;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 
 /**
@@ -42,10 +43,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                 int adicionado = pst.executeUpdate();
                 if (adicionado > 0) {
                     JOptionPane.showInternalMessageDialog(null, "Cliente adiconado com sucesso");
-                    txtCliNome.setText(null);
-                    txtCliEndereco.setText(null);
-                    txtCliEmail.setText(null);
-                    txtCliFone.setText(null);
+                    limpar();
                 }
             }
         } catch (Exception e) {
@@ -55,7 +53,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
     }
 
     private void pesquisar_cliente() {
-        String sql = "SELECT * FROM tbclientes WHERE nomecli LIKE ?";
+        String sql = "SELECT idcli as id, nomecli as nome, endcli as endereço, fonecli as fone, emailcli as email FROM tbclientes WHERE nomecli LIKE ?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtCliPesquisar.getText() + "%");
@@ -73,7 +71,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         txtCliEndereco.setText(tblClientes.getModel().getValueAt(setar, 2).toString());
         txtCliFone.setText(tblClientes.getModel().getValueAt(setar, 3).toString());
         txtCliEmail.setText(tblClientes.getModel().getValueAt(setar, 4).toString());
-        
+
         btnAdicionar.setEnabled(false);
 
     }
@@ -93,11 +91,8 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                 int adicionado = pst.executeUpdate();
                 if (adicionado > 0) {
                     JOptionPane.showInternalMessageDialog(null, "Dados do Cliente alterados com sucesso");
-                    txtCliNome.setText(null);
-                    txtCliFone.setText(null);
-                    txtCliEmail.setText(null);
-                    txtCliEndereco.setText(null);
-                    
+                    limpar();
+
                     btnAdicionar.setEnabled(true);
                 }
             }
@@ -105,6 +100,36 @@ public class TelaCliente extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, e);
 
         }
+    }
+
+    private void remover() {
+        int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja remover esse cliente ?", "Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            String sql = "DELETE FROM tbclientes WHERE idcli=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtCliId.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0) {
+                    JOptionPane.showMessageDialog(null, "Cliente removido com sucesso");
+                    limpar();
+
+                    btnAdicionar.setEnabled(true);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
+
+    private void limpar() {
+        txtCliPesquisar.setText(null);
+        txtCliId.setText(null);
+        txtCliNome.setText(null);
+        txtCliEndereco.setText(null);
+        txtCliEmail.setText(null);
+        txtCliFone.setText(null);
+        ((DefaultTableModel) tblClientes.getModel()).setRowCount(0);
     }
 
     /**
@@ -135,6 +160,9 @@ public class TelaCliente extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         txtCliId = new javax.swing.JTextField();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setPreferredSize(new java.awt.Dimension(870, 470));
 
         jLabel1.setText("*Nome");
@@ -165,6 +193,11 @@ public class TelaCliente extends javax.swing.JInternalFrame {
 
         btnRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/delete.png"))); // NOI18N
         btnRemover.setPreferredSize(new java.awt.Dimension(64, 64));
+        btnRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverActionPerformed(evt);
+            }
+        });
 
         txtCliEndereco.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -192,17 +225,24 @@ public class TelaCliente extends javax.swing.JInternalFrame {
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/pesquisar.png"))); // NOI18N
 
+        tblClientes = new javax.swing.JTable(){
+            public boolean isCellEditable(int rowIndex, int colIndex){
+                return false;
+            }
+        };
         tblClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Id", "Nome", "Endereço", "Fone", "Email"
             }
         ));
+        tblClientes.setFocusable(false);
+        tblClientes.getTableHeader().setReorderingAllowed(false);
         tblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblClientesMouseClicked(evt);
@@ -246,7 +286,7 @@ public class TelaCliente extends javax.swing.JInternalFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtCliFone, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtCliEndereco)
-                            .addComponent(txtCliEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+                            .addComponent(txtCliEmail)
                             .addComponent(txtCliNome)
                             .addComponent(txtCliId))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -331,6 +371,10 @@ public class TelaCliente extends javax.swing.JInternalFrame {
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         alterar();
     }//GEN-LAST:event_btnAlterarActionPerformed
+
+    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
+        remover();
+    }//GEN-LAST:event_btnRemoverActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

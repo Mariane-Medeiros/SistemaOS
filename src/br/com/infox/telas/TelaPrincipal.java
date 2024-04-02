@@ -89,6 +89,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         MenCadOs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_DOWN_MASK));
         MenCadOs.setText("OS");
+        MenCadOs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenCadOsActionPerformed(evt);
+            }
+        });
         menCad.add(MenCadOs);
 
         MenCadUsu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_DOWN_MASK));
@@ -166,15 +171,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addComponent(lblUsuario)
                         .addGap(32, 32, 32)
                         .addComponent(lblData)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
                         .addComponent(jLabel2))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(desktop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(desktop, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        setSize(new java.awt.Dimension(891, 484));
+        setSize(new java.awt.Dimension(891, 504));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -207,6 +212,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         cliente.setVisible(true);
         desktop.add(cliente);
     }//GEN-LAST:event_MenCadCliActionPerformed
+
+    private void MenCadOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenCadOsActionPerformed
+        TelaOs os = new TelaOs();
+        os.setVisible(true);
+        desktop.add(os);
+    }//GEN-LAST:event_MenCadOsActionPerformed
 
     /**
      * @param args the command line arguments
